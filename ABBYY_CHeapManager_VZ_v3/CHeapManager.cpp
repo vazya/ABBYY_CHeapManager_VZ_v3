@@ -40,11 +40,10 @@ void CHeapManager::Create(int _minSize, int _maxSize) {
 
 	int numberOfPages = maxSize / pageSize;
 	pages.resize(numberOfPages, 0);
-	//	numberOfPages = minSize / pageSize;
-	//	for (int i = 0; i <= numberOfPages; ++i) {
-	//		pages[i]++;
-	//	}
-	//	pages[0] = 1;
+	numberOfPages = minSize / pageSize;
+	for (int i = 0; i <= numberOfPages; ++i) {
+		pages[i]++;
+	}
 	addFreeBlock(startAddress, maxSize);
 }
 
@@ -121,8 +120,6 @@ int CHeapManager::getBlockSize(LPVOID pointer) {
 void CHeapManager::addFreeBlock(LPVOID start, int size) {
 	if (size < pageSize) {
 		::memcpy(start, &size, sizeof(int));					// записываем размер блока
-																//		int chkSize;
-																//		::memcpy(&chkSize, start, sizeof(int));
 		freeSmallBlocks.insert(start);
 	} else if (size < maxMediumBlockSize) {
 		freeMediumBlocks.insert(make_pair(start, size + sizeof(int)));
@@ -221,10 +218,7 @@ void* CHeapManager::updateFreeBlocks(AddresSize block, int size) {
 		system("pause");
 		exit(1);
 	}
-	memcpy(blockPtr, &size, sizeof(int));						// записали размер в начало алокируемой памяти
-
-																//	int checkSize;												////////
-																//	memcpy(&checkSize, blockPtr, sizeof(int));					////////
+	memcpy(blockPtr, &size, sizeof(int));				// записали размер в начало алокируемой памяти
 
 	for (int i = startPage; i <= endPage; i++) {
 		pages[i] += 1;
@@ -278,9 +272,9 @@ AddresSize CHeapManager::getLeftBarier(LPVOID blockPtr, int blockSize) {
 		it--;
 		LPVOID freeBlockPtr = it->first;
 		int freeBlockSize = it->second;
-		//		auto leftarg0 = static_cast<byte*>(freeBlockPtr)+freeBlockSize;
-		//		auto leftarg = static_cast<byte*>(freeBlockPtr)+freeBlockSize + sizeof(int);
-		//		auto rightarg = static_cast<byte*>(blockPtr);
+//		auto leftarg0 = static_cast<byte*>(freeBlockPtr)+freeBlockSize;
+//		auto leftarg = static_cast<byte*>(freeBlockPtr)+freeBlockSize + sizeof(int);
+//		auto rightarg = static_cast<byte*>(blockPtr);
 		if (static_cast<byte*>(freeBlockPtr) + freeBlockSize + sizeof(int) == static_cast<byte*>(blockPtr)) {
 			result.first = freeBlockPtr;
 			result.second = freeBlockSize;
