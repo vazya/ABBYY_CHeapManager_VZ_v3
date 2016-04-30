@@ -93,15 +93,76 @@ void testTimeMyHeap(int n) {
 }
 
 void testTime() {
+	cout << "Ordered Alloc and Free:" << endl;
 	int n = 10000;
 	testTimeMyHeap(n);
-	cout << endl;
 	testTimeStandartHeap(n);
+	cout << endl << endl;
 }
 
+void testTimeMyHeap2(int n) {
+	high_resolution_clock::time_point time1 = high_resolution_clock::now();
+
+	heapManager.Create(64 * KB, 32 * n * KB);
+	vector <CMyHeapRandom*> v;
+	v.resize(n, nullptr);
+
+	for (int i = 0; i < n; ++i) {
+		int cell = rand() % n;
+		if (v[i] != nullptr) {
+			CMyHeapRandom* toDel = v[i];
+			delete (toDel);
+			v[i] = nullptr;
+		} else {
+			CMyHeapRandom* tmp = new CMyHeapRandom();
+			v[i] = tmp;
+		}
+	}
+
+	heapManager.Destroy();
+	high_resolution_clock::time_point time2 = high_resolution_clock::now();
+
+	auto duration = duration_cast<microseconds>(time2 - time1).count();
+	cout << "My  Heap Time: " << duration << "   microseconds" << endl;
+}
+
+void testTimeStandartHeap2(int n) {
+	high_resolution_clock::time_point time1 = high_resolution_clock::now();
+	
+	standartHeapManager = HeapCreate(0, 64 * KB, 32 * n * KB);
+	vector <CStandartHeapRandom*> v;
+	v.resize(n, nullptr);
+
+	for (int i = 0; i < n; ++i) {
+		int cell = rand() % n;
+		if (v[i] != nullptr) {
+			CStandartHeapRandom* toDel = v[i];
+			delete (toDel);
+			v[i] = nullptr;
+		} else {
+			CStandartHeapRandom* tmp = new CStandartHeapRandom();
+			v[i] = tmp;
+		}
+	}
+
+	HeapDestroy(standartHeapManager);
+	high_resolution_clock::time_point time2 = high_resolution_clock::now();
+
+	auto duration = duration_cast<microseconds>(time2 - time1).count();
+	cout << "Standart Heap: " << duration << "   microseconds" << endl;
+}
+
+void testTime2() {
+	cout << "Random Alloc and Free:" << endl;
+	int n = 10000;
+	testTimeMyHeap2(n);
+	testTimeStandartHeap2(n);
+	cout << endl << endl;
+}
 
 int main() {
 	testTime();
+	testTime2();
 	cout << endl << "end of tests" << endl;
 	system("pause");
 	return 0;

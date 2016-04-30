@@ -91,9 +91,11 @@ void CHeapManager::Free(void *mem) {
 }
 
 void CHeapManager::Destroy() {
+/* // для сравнения стандартной кучи и нашей уберем вывод не почищенных блоков
 	for (auto it = allocatedBlocks.begin(); it != allocatedBlocks.end(); it++) {
 		cout << "Unfreed memory: start " << *it << " size: " << getBlockSize(*it) << endl;
 	}
+//*/
 	VirtualFree(startAddress, maxSize, MEM_RELEASE);
 	startAddress = 0;
 	pages = vector <int>();
